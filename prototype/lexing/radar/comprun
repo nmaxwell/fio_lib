@@ -1,0 +1,41 @@
+tt -N 64 -ffile f_64.bin -bfio_EPS 5 -bfio_fi 2 -bfio_datfile bfio.bin
+tt -N 256 -ffile f_256.bin -bfio_EPS 5 -bfio_fi 2 -bfio_datfile bfio.bin
+tt -N 1024 -ffile f_1024.bin -bfio_EPS 5 -bfio_fi 2 -bfio_datfile bfio.bin
+tt -N 4096 -ffile f_4096.bin -bfio_EPS 5 -bfio_fi 2 -bfio_datfile bfio.bin
+
+tt -N 64 -ffile f_64.bin -bfio_EPS 7 -bfio_fi 2 -bfio_datfile bfio.bin
+tt -N 256 -ffile f_256.bin -bfio_EPS 7 -bfio_fi 2 -bfio_datfile bfio.bin
+tt -N 1024 -ffile f_1024.bin -bfio_EPS 7 -bfio_fi 2 -bfio_datfile bfio.bin
+tt -N 4096 -ffile f_4096.bin -bfio_EPS 7 -bfio_fi 2 -bfio_datfile bfio.bin
+
+tt -N 64 -ffile f_64.bin -bfio_EPS 9 -bfio_fi 2 -bfio_datfile bfio.bin
+tt -N 256 -ffile f_256.bin -bfio_EPS 9 -bfio_fi 2 -bfio_datfile bfio.bin
+tt -N 1024 -ffile f_1024.bin -bfio_EPS 9 -bfio_fi 2 -bfio_datfile bfio.bin
+tt -N 4096 -ffile f_4096.bin -bfio_EPS 9 -bfio_fi 2 -bfio_datfile bfio.bin
+
+
+//----------------------------
+
+tt -N 64 -ffile f_64.bin -bfio_EPS 5 -bfio_fi 2 -bfio_datfile bfio.bin
+tt -N 128 -ffile f_128.bin -bfio_EPS 5 -bfio_fi 2 -bfio_datfile bfio.bin
+tt -N 256 -ffile f_256.bin -bfio_EPS 5 -bfio_fi 2 -bfio_datfile bfio.bin
+tt -N 512 -ffile f_512.bin -bfio_EPS 5 -bfio_fi 2 -bfio_datfile bfio.bin
+tt -N 1024 -ffile f_1024.bin -bfio_EPS 5 -bfio_fi 2 -bfio_datfile bfio.bin
+tt -N 2048 -ffile f_2048.bin -bfio_EPS 5 -bfio_fi 2 -bfio_datfile bfio.bin
+
+
+tt -N 64 -ffile f_64.bin -bfio_EPS 7 -bfio_fi 2 -bfio_datfile bfio.bin
+tt -N 128 -ffile f_128.bin -bfio_EPS 7 -bfio_fi 2 -bfio_datfile bfio.bin
+tt -N 256 -ffile f_256.bin -bfio_EPS 7 -bfio_fi 2 -bfio_datfile bfio.bin
+tt -N 512 -ffile f_512.bin -bfio_EPS 7 -bfio_fi 2 -bfio_datfile bfio.bin
+tt -N 1024 -ffile f_1024.bin -bfio_EPS 7 -bfio_fi 2 -bfio_datfile bfio.bin
+tt -N 2048 -ffile f_2048.bin -bfio_EPS 7 -bfio_fi 2 -bfio_datfile bfio.bin
+
+
+tt -N 64 -ffile f_64.bin -bfio_EPS 9 -bfio_fi 2 -bfio_datfile bfio.bin
+tt -N 128 -ffile f_128.bin -bfio_EPS 9 -bfio_fi 2 -bfio_datfile bfio.bin
+tt -N 256 -ffile f_256.bin -bfio_EPS 9 -bfio_fi 2 -bfio_datfile bfio.bin
+tt -N 512 -ffile f_512.bin -bfio_EPS 9 -bfio_fi 2 -bfio_datfile bfio.bin
+tt -N 1024 -ffile f_1024.bin -bfio_EPS 9 -bfio_fi 2 -bfio_datfile bfio.bin
+tt -N 2048 -ffile f_2048.bin -bfio_EPS 9 -bfio_fi 2 -bfio_datfile bfio.bin
+
