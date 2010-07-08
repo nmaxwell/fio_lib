@@ -21,7 +21,6 @@ double uniform(double low, double high)
 
 
 
-
 int test1()
 {
   int error=0;

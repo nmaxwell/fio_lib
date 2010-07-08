@@ -1,22 +1,130 @@
 
+#include "bfio_interpolation.cpp"
+
+
+#include <iostream>
+#include <math.h>
+#include <complex>
+#include <vector>
+#include <assert.h>
+
+using namespace std;
+
+
+double fun(double *dat, int n)
+{
+  double sum = 0;
+  for (int k=0; k<n; k++)
+    sum += dat[k];
+  return sum;
+}
+
+#include<time.h>
+
+
 
 
 
 int bfio_lexing(complex<double> *input, complex<double> *output,  int N, int start_level, int end_level, int n_cheby, double (*phase)(double, double, double ,double))
 {
-  
-  double grid[n_cheby];
+  int log2N = (int)(floor(log(N)/log(2)));
+  int input_box_size = 1 << (log2N - start_level);
+  int output_box_size = 1 << end_level;
+    
+  double grid[n_cheby]; // chebyshev grid on [0,1]
   for (int k=0; k<n_cheby; k++)
-        ptr[n_cheby-k-1] = (cos((double)k*3.1415926535897932384/(n_cheby-1))*0.5+0.5)*(end-start)+start;
+        grid[n_cheby-k-1] = (cos((double)k*3.1415926535897932384/(n_cheby-1))*0.5+0.5);
+ 
+
+
+
+  double mats1[n_cheby][n_cheby];
+  double mats2[n_cheby][n_cheby];
+  //double[n_cheby][n_cheby] mats = {mats1, mats2}
+
+
+
+
+
+
+
+
+  int n = 1 << 20;
   
+  double *heap = new double [n];
+  double t0,t1;
   
+  t0 = clock();
+  double sum = fun(heap, n);
+  t1 = clock();
+  
+  cout << t1-t0 << endl;
+  cout << sum << endl;
 
 
 
-  Entry& ent = _e2dmap[_EPS];
-  DblNumVec& grid = ent.grid();
-  NumVec<CpxNumMat>& mats = ent.mats();
-  CpxNumMat& dir = ent.dir();
+
+
+
+
+
+
+  /*
+
+  { // setting up interpolation matrices between parent and child boxes
+    double temp[n_cheby];
+    for (int k=0; k<n_cheby; k++)
+      temp[k] = grid[k]/2;
+    lagrange_matrix(mats[0], n_cheby, n_cheby, grid, temp);
+    for (int k=0; k<n_cheby; k++)
+      temp[k] = grid[k]/2 + 0.5;
+    lagrange_matrix(mats[1], n_cheby, n_cheby, grid, temp);
+  }
+  
+  double dir_in[n_cheby][input_box_size];
+  double dir_out[output_box_size][n_cheby];
+
+  { // setting up interpolation matrix between input (regularly samples) grids, and chebyshev grids.
+    double temp[input_box_size];
+    for (int k=0; k<input_box_size; k++)
+      temp[k] = ((double)k)/input_box_size;
+    lagrange_matrix(dir_in, input_box_size, n_cheby, grid, temp);
+  }
+
+  { // setting up interpolation matrix between output (regularly samples) grids, and chebyshev grids.
+    double temp[output_box_size];
+    for (int k=0; k<output_box_size; k++)
+      temp[k] = ((double)k)/output_box_size;
+    lagrange_matrix(dir_out, n_cheby, output_box_size, temp, grid);
+  }
+
+  double tmats1[n_cheby][n_cheby];
+  double tmats2[n_cheby][n_cheby];
+  double *tmats[2] = {tmats2, tmats2}
+  
+  double tdir_in[input_box_size][n_cheby];
+  double tdir_out[n_cheby][output_box_size];
+
+  { // transposes
+    for (int i=0; i<n_cheby; i++)
+      for (int k=0; j<n_cheby; j++) {
+	tmats[0][i][j] = mats[0][j][i];
+	tmats[1][i][j] = mats[1][j][i]; }
+    for (int i=0; i<n_cheby; i++)
+      for (int k=0; j<input_grid_size; j++)
+	tdir_in[j][i] = dir_in[i][j];
+    for (int i=0; i<n_cheby; i++)
+      for (int k=0; j<output_grid_size; j++)
+	tdir_in[i][j] = dir_in[j][i];
+  }
+
+
+  */
+
+
+
+
+  /*
 
   //the transpose matrices
   NumVec<CpxNumMat> tmats(2);
@@ -278,6 +386,14 @@ int bfio_lexing(complex<double> *input, complex<double> *output,  int N, int sta
 	NXT.resize(0,0);
       }//ell
     }//z1z2
+  
+
+
+  */
+
+  
+
+
   return 0;
 }
 
