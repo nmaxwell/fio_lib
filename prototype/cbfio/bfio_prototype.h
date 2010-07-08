@@ -47,8 +47,10 @@ typedef struct
     int end_level;
     double (*phase)(double, double, double, double);
     
+
     bfio_data_list *input_data;
     int input_data_size;
+
     
     double *unit_cheby_grid;
     
@@ -65,7 +67,9 @@ int bfio_initialize_session(bfio_session *session,  int N, int n_cheby, int star
 int bfio_destruct_session(bfio_session *session);
 
 
-int bfio_intialize_input_data(bfio_session *session, int j1, int j2, int size);
+int bfio_initialize_input_data(bfio_session *session, int j1, int j2, int size);
+
+int bfio_free_input_data(bfio_session *session, int j1, int j2);
 
 int bfio_set_input_data_array(bfio_session *session, int j1, int j2, int size, double *x1, double *x2, double complex *value);
 

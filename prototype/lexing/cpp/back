@@ -1,0 +1,23 @@
+                  if(0)
+                    den1 = f(t1+N/2+1,t2+N/2+1);
+                    [t1s,t2s] = ndgrid(t1,t2);
+                    src = [t1s(:)'; t2s(:)'];
+                    tmp = fun(N,trg-3,src);                tmp = reshape(tmp,kB,kB);
+                    val1 = sum(sum(tmp.*den1));
+                    
+                    den2 = all;
+                    src = [g1s(:)'; g2s(:)'];
+                    tmp = fun(N,trg-3,src);              tmp = reshape(tmp,NG,NG);
+                    val2 = sum(sum(tmp.*den2));
+                    fprintf(1,'%d %d    %d %d      %d\n', k1,k2,x1,x2,norm(val1-val2)/norm(val1));
+                  end
+                  if(0)
+                    [t1s,t2s] = ndgrid(t1,t2);
+                    src = [t1s(:)'; t2s(:)'];
+                    tmp0 = fun(N,trg,src);                tmp0 = reshape(tmp0,kB,kB);
+                    %figure; imagesc(real(tmp0));
+                    tmp1 = fun(N,trg-3,src);                tmp1 = reshape(tmp1,kB,kB);
+                    %figure; imagesc(real(tmp1));
+                    %fprintf(1,'%d %d    %d %d\n', k1,k2,x1,x2);
+                    imagesc(real(tmp1./tmp0)); pause;
+                  end

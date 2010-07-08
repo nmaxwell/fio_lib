@@ -34,21 +34,9 @@ documentation:
 #include <math.h>
 
 
-<<<<<<< HEAD:prototype/cbfio/exact_fio.h
 int exact_fio_2d(double complex *output, int N, double complex *input, double (*phase)(double, double, double, double) );
 
 int exact_fio_dft(double complex *output, int N, double complex *input);
-=======
-//using namespace std;
-
-int exact_fio_2d(double complex *output, int N, double complex *input, double (*phase)(double, double, double, double) );
-
-
-int exact_fio_dft(double complex *output, int N, double complex *input);
-
-
->>>>>>> 3986310ff80c68cafd3241fa9b449d03dfcc2160:prototype/c_code/exact_fio.h
-
 
 
 

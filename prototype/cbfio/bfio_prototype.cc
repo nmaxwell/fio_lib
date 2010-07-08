@@ -188,87 +188,105 @@ int bfio_destruct_session(bfio_session *session)
 {
     if (session->input_data != NULL)
     {
-        for (int k=0; k<session->input_data_size; k++)
-            if (session->input_data[k].data != NULL)
-            {
-                free(session->input_data[k].data);
-                session->input_data[k].data = NULL;
-            }
+      int n_boxes = bfio_pow2(session->start_level);
+      for (int j1=0; j1<n_boxes; j1++)
+	for (int j2=0; j2<n_boxes; j2++) {
+	  int error = bfio_free_input_data(session, j1, j2);
+	  if (error) return __LINE__;
+	}
+
         free(session->input_data);
-        session->input_data= NULL;
+        session->input_data = NULL;
     }
     
-    if (session->unit_cheby_grid != NULL)
-    {
+    if (session->unit_cheby_grid != NULL) {
         free(session->unit_cheby_grid);
         session->unit_cheby_grid= NULL;
-    }
+      }
     
     *session = (bfio_session){0, 0, 0, 0, 0, NULL, 0, NULL};
     return 0;
 }
 
-int bfio_intialize_input_data(bfio_session *session, int j1, int j2, int size)
+int bfio_initialize_input_data(bfio_session *session, int j1, int j2, int size)
 {
-    if (session->input_data == NULL)
-        return __LINE__;
+  if (session->input_data == NULL)
+    return __LINE__;
     
-    int n_boxes = bfio_pow2(session->start_level);
+  int n_boxes = bfio_pow2(session->start_level);
     
-    if (j1>=n_boxes || j2>=n_boxes)
-        return __LINE__;
+  if (j1>=n_boxes || j2>=n_boxes)
+    return __LINE__;
     
-    if (session->input_data[j1*n_boxes+j2].data != NULL)
+  if (((session->input_data)[j1*n_boxes+j2]).data != NULL)
     {
-        free(session->input_data[j1*n_boxes+j2].data);
-        session->input_data[j1*n_boxes+j2].data = 0;
+      free(((session->input_data)[j1*n_boxes+j2]).data);
+      ((session->input_data)[j1*n_boxes+j2]).data = NULL;
     }
+
+  ((session->input_data)[j1*n_boxes+j2]).size = size;    
+  ((session->input_data)[j1*n_boxes+j2]).data = (bfio_data_point *)calloc(size, sizeof(bfio_data_list));;
     
-    session->input_data[j1*n_boxes+j2].data = (bfio_data_point *)calloc(size, sizeof(bfio_data_list));;
+if (((session->input_data)[j1*n_boxes+j2]).data == NULL)
+  return __LINE__;
     
-    if (session->input_data[j1*n_boxes+j2].data == NULL)
-        return __LINE__;
+return 0;
+}
+
+int bfio_free_input_data(bfio_session *session, int j1, int j2)
+{
+  if (session->input_data == NULL)
+    return __LINE__;
+  
+  int n_boxes = bfio_pow2(session->start_level);
+
+  if (j1>=n_boxes || j2>=n_boxes)
+    return __LINE__;
+ 
+  if (((session->input_data)[j1*n_boxes+j2]).data != NULL)
+    {
+      free(((session->input_data)[j1*n_boxes+j2]).data);
+      ((session->input_data)[j1*n_boxes+j2]).data = NULL;
+    }
+  ((session->input_data)[j1*n_boxes+j2]).size = 0;
+
+  return 0;
     
-    session->input_data[j1*n_boxes+j2].size = size;
-    
-    return 0;
 }
 
 int bfio_set_input_data_array(bfio_session *session, int j1, int j2, int size, double *x1, double *x2, double complex *value)
 {
-    int error = bfio_intialize_input_data(session, j1, j2, size);
-    if (error != 0)
-        return error+10;
+  int error = bfio_initialize_input_data(session, j1, j2, size);
+  if (error != 0)
+    return error+10;
     
-    if (x1 == NULL || x2 == NULL || value == NULL)
-        return 1;
+  if (x1 == NULL || x2 == NULL || value == NULL)
+    return 1;
     
-    int n_boxes = bfio_pow2(session->start_level);
-    for (int position=0; position<size; position++)
-        session->input_data[j1*n_boxes+j2].data[position] = (bfio_data_point){x1[position], x2[position], value[position]};
+  int n_boxes = bfio_pow2(session->start_level);
+  for (int position=0; position<size; position++)
+    (((session->input_data)[j1*n_boxes+j2]).data)[position] = (bfio_data_point){x1[position], x2[position], value[position]};
     
-    return 0;
+  return 0;
 }
 
 int bfio_set_input_data_point(bfio_session *session, int j1, int j2, int position, double x1, double x2, double complex value)
 {
-    if (session->input_data == NULL)
-        return __LINE__;
+  if (session->input_data == NULL)
+    return __LINE__;
     
-    int n_boxes = bfio_pow2(session->start_level);
+  int n_boxes = bfio_pow2(session->start_level);
     
-    if (j1>=n_boxes || j2>=n_boxes)
-        return __LINE__;
+  if (j1>=n_boxes || j2>=n_boxes)
+    return __LINE__;
     
-    if (session->input_data[j1*n_boxes+j2].data == NULL)
-        return __LINE__;
+  if (((session->input_data)[j1*n_boxes+j2]).data == NULL)
+    return __LINE__;
     
-    //printf("%d\t%d\t%d\t%d\t%d\n", j1, j2, n_boxes, ((session->input_data)[j1*n_boxes+j2]).size, position);
+  if (position >= ((session->input_data)[j1*n_boxes+j2]).size)
+    return __LINE__;
     
-    if (position >= session->input_data[j1*n_boxes+j2].size)
-        return __LINE__;
-    
-    session->input_data[j1*n_boxes+j2].data[position] = (bfio_data_point){x1, x2, value};
+  (((session->input_data)[j1*n_boxes+j2]).data)[position] = (bfio_data_point){x1, x2, value};
     
     return 0;
 }
