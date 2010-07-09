@@ -7,21 +7,9 @@
 #include <complex>
 #include <vector>
 #include <assert.h>
-
-using namespace std;
-
-
-double fun(double *dat, int n)
-{
-  double sum = 0;
-  for (int k=0; k<n; k++)
-    sum += dat[k];
-  return sum;
-}
-
 #include<time.h>
 
-
+using namespace std;
 
 
 
@@ -34,42 +22,12 @@ int bfio_lexing(complex<double> *input, complex<double> *output,  int N, int sta
   double grid[n_cheby]; // chebyshev grid on [0,1]
   for (int k=0; k<n_cheby; k++)
         grid[n_cheby-k-1] = (cos((double)k*3.1415926535897932384/(n_cheby-1))*0.5+0.5);
- 
-
-
 
   double mats1[n_cheby][n_cheby];
   double mats2[n_cheby][n_cheby];
-  //double[n_cheby][n_cheby] mats = {mats1, mats2}
+  double *mats[2] = {&(mats1[0][0]), &(mats2[0][0])};
 
 
-
-
-
-
-
-
-  int n = 1 << 20;
-  
-  double *heap = new double [n];
-  double t0,t1;
-  
-  t0 = clock();
-  double sum = fun(heap, n);
-  t1 = clock();
-  
-  cout << t1-t0 << endl;
-  cout << sum << endl;
-
-
-
-
-
-
-
-
-
-  /*
 
   { // setting up interpolation matrices between parent and child boxes
     double temp[n_cheby];
@@ -88,7 +46,7 @@ int bfio_lexing(complex<double> *input, complex<double> *output,  int N, int sta
     double temp[input_box_size];
     for (int k=0; k<input_box_size; k++)
       temp[k] = ((double)k)/input_box_size;
-    lagrange_matrix(dir_in, input_box_size, n_cheby, grid, temp);
+    lagrange_matrix(dir_in[0][0]), input_box_size, n_cheby, grid, temp);
   }
 
   { // setting up interpolation matrix between output (regularly samples) grids, and chebyshev grids.
@@ -117,10 +75,6 @@ int bfio_lexing(complex<double> *input, complex<double> *output,  int N, int sta
       for (int k=0; j<output_grid_size; j++)
 	tdir_in[i][j] = dir_in[j][i];
   }
-
-
-  */
-
 
 
 
