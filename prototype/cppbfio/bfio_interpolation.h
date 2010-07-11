@@ -13,4 +13,5 @@ int lagrange_matrix(double *matrix, int n_input_points, int n_output_points, dou
 int chebyshev_grid(double *grid, int n_points, double start, double end);
 
 
+
 #endif

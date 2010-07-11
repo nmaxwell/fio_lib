@@ -6,9 +6,10 @@
 
 double get_real_time()
 {
-	timespec current_time;
+  /*timespec current_time;
 	clock_gettime(CLOCK_REALTIME, &current_time);
-	return (double) ((double)current_time.tv_sec+(double)current_time.tv_nsec/(1.0E9));
+	return (double) ((double)current_time.tv_sec+(double)current_time.tv_nsec/(1.0E9)); */
+  return clock();
 }
 
 
@@ -52,8 +53,6 @@ int test1()
   
   error = bfio_lexing(input, output, N, start_level, end_level, n_cheby, dft_phase);
   
-
-
 
   free(input);
   free(output);
