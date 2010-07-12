@@ -1,7 +1,7 @@
 #!/bin/sh
 
 find . -name *DS_Store* -exec rm {} \;
-
+find . -name *~ -exec rm {} \;
 find . -name *.out -exec rm {} \;
 find . -name *.o -exec rm {} \;
 find . -name *.a -exec rm {} \;

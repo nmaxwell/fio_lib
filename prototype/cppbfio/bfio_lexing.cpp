@@ -55,29 +55,48 @@ public:
   expansionCoefficients():x_level(0), k_level(0), n_cheby(0), data(NULL) {}
   expansionCoefficients(int x_level, int k_level, int n_cheby);
   ~expansionCoefficients();
+  
+  void operator= (expansionCoefficients &rhs);
 
   MatrixXc &operator() (int i1, int i2, int j1, int j2);
 };
 
+void expansionCoefficients::operator= (expansionCoefficients &rhs)
+{
+   if (data != NULL)
+    delete [] data;
+  data = NULL;
+  x_level=rhs.x_level;
+  k_level=rhs.k_level;
+  n_cheby=rhs.n_cheby;
+  data = rhs.data;
+  rhs.x_level = 0;
+  rhs.k_level = 0;
+  rhs.n_cheby = 0;
+  rhs.data = NULL;
+}
+
 MatrixXc & expansionCoefficients::operator () (int i1, int i2, int j1, int j2)
 {
+  int size = (1 << (2*(x_level + k_level)));
   int x_size = 1<<x_level;
   int k_size = 1<<k_level;
   int stride = n_cheby*n_cheby;
   assert(i1 < x_size and i2 < x_size);
   assert(j1 < k_size and j2 < k_size);
+  assert((k_size*(k_size*(x_size*i1+i2)+j1)+j2) < size);
   assert(data != NULL);
   
-  return data[(k_size*(k_size*(x_size*i1+i2)+j1)+j2)*stride];
+  return data[(k_size*(k_size*(x_size*i1+i2)+j1)+j2)];
 }
 
 expansionCoefficients::expansionCoefficients(int x_level, int k_level, int n_cheby)
   :x_level(x_level), k_level(k_level), n_cheby(n_cheby), data(NULL) {
-  int size = (1 << 2*x_level)*(1<< 2*k_level);
+  int size = (1 << (2*(x_level + k_level)));
   data = new MatrixXc [size];
+  assert(data != NULL);
   for (int k=0; k<size; k++)
     data[k] = MatrixXc(n_cheby, n_cheby);
-  assert(data != NULL);
 }
 
 expansionCoefficients::~expansionCoefficients()
@@ -168,10 +187,10 @@ int bfio_lexing(complex<double> *input_data, complex<double> *output,  int N, in
 	int kbox_size = N/n_kboxes;
 	int n_xboxes = 1 << (log2N - level);
 	int xbox_size = N/n_xboxes;
-	  
+	
 	int k_level = level;
 	int x_level = log2N - k_level;
-	  
+	
 	expansionCoefficients next_coefficients(x_level, k_level, n_cheby);
 	  
 	for (int k1=zone_start1/zone_size; k1<zone_end1/zone_size; k1++)
@@ -227,12 +246,12 @@ int bfio_lexing(complex<double> *input_data, complex<double> *output,  int N, in
 		    for (int j=0; j<n_cheby; j++)
 		      all(i,j) *= exp(-arg*phase(x_center1, x_center2, (i+k1)*kbox_size, (j+k2)*kbox_size)); // this is wrong, need to scale
 
-
-
-
+		  next_coefficients(x1, x2, k1, k2) = all;
 		}
 	      }
 	  }
+	
+	coefficients = next_coefficients;
       }
     }
   /*

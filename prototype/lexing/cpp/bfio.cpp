@@ -1,5 +1,6 @@
 #include "bfio.hpp"
 #include "serialize.hpp"
+#define _GNU_SOURCE#include <math.h>
 
 using std::istringstream;
 using std::ifstream;
@@ -86,7 +87,7 @@ int BFIO::kernel(int N, const vector<Point2>& xi, const vector<Point2>& ki, CpxN
     DblNumMat ss(m,n), cc(m,n);
     int TTL = m*n;
     //vdsincos_(&TTL, phs.data(), ss.data(), cc.data());
-    for(int j=0; j<n; j++)      for(int i=0; i<m; i++)	sincos(phs(i,j), &(ss(i,j)), &(cc(i,j)));
+	for(int j=0; j<n; j++)      for(int i=0; i<m; i++)	{ ss(i,j) = sin(phs(i,j)); cc(i,j) = cos(phs(i,j)); }
     res.resize(m,n);
     for(int j=0; j<n; j++)
       for(int i=0; i<m; i++)

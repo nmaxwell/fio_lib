@@ -30,27 +30,31 @@ double uniform(double low, double high)
 
 
 
-int test1()
+int test1(char input_fname[] )
 {
-  
   int error=0;
-    
-  int n=6;
-  N = 1 << n;
-  int start_level = n-2;
-  int end_level = 2;
-  int n_cheby = 9;
   
   srand ( time(NULL) );
+
+  ifstream input_file;
+  int m,n;
+  input_file.read((char*)(&m), 4);
+  input_file.read((char*)(&n), 4);
+  assert( n == m );
+  N = m;
 
   complex<double>  *input = (complex<double> *)calloc(N*N, 16);
   complex<double> *output = (complex<double> *)calloc(N*N, 16);
 
   for (int i=0; i<N; i++)
     for (int j=0; j<N; j++)
-      input[i*N+j] = complex<double>(uniform(-1,1),uniform(-1,1));
-
+      input_file.read(input+j*N+i, 16);
   
+  int log2N = (int)(log(N)/log(2));
+  int start_level = log2N=3;
+  int end_level = 3;
+  int n_cheby = 9;
+
   error = bfio_lexing(input, output, N, start_level, end_level, n_cheby, dft_phase);
   
 
