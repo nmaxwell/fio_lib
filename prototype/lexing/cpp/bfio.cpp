@@ -92,6 +92,59 @@ int BFIO::kernel(int N, const vector<Point2>& xi, const vector<Point2>& ki, CpxN
     for(int j=0; j<n; j++)
       for(int i=0; i<m; i++)
 	res(i,j) = cpx( cc(i,j), ss(i,j) );
+    
+    
+    
+    } else if(_fi==3) {  
+        
+    //-- MAXWELL: phase for DFT
+    
+    int m = xs.size();
+    int n = ks.size();
+    for(int i=0; i<m; i++)      xs[i] = xs[i]/double(N); //LEXING: IMPORTANT
+    for(int j=0; j<n; j++)      ks[j] = ks[j]/double(N); //LEXING: IMPORTANT
+    DblNumMat phs(m,n);
+    
+    double halfN = ((double)N)/2;
+	res.resize(m,n);
+    
+    
+    
+    
+    
+    
+    
+    DblNumMat imag(m,n), real(m,n);
+    
+    for(int j=0; j<n; j++)
+    for(int i=0; i<m; i++) {
+        imag(i,j) = sin(phs(i,j));
+        real(i,j) = cos(phs(i,j)); }
+    
+    for(int j=0; j<n; j++)
+      for(int i=0; i<m; i++)
+        res(i,j) = cpx( real(i,j), imag(i,j) );
+    
+    //  return -(x1*(k1+halfN) + x2*(k2+halfN));
+    
+    
+    
+    double COEF = -2.0*N;
+    double H = 1;
+    double HH = H*H;
+    for(int j=0; j<n; j++) {
+      double w = 1.0 + ks[j](0)*3.0;
+      double s = ks[j](1);
+      for(int i=0; i<m; i++) {
+	double x1 = xs[i](0);
+	double x2 = xs[i](1);
+	double tmp = (s-x1)*(s-x1) + x2*x2 + HH;
+	phs(i,j) = COEF * ( w*sqrt(tmp) );
+      }
+    }
+    
+    
+    
   } else {
     //--------------------------
     iA(0);

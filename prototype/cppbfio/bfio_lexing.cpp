@@ -114,10 +114,10 @@ expansionCoefficients::~expansionCoefficients()
 int bfio_lexing(complex<double> *input_data, complex<double> *output,  int N, int start_level, int end_level, int n_cheby, double (*phase)(double, double, double ,double))
 {
   MatrixXc input(N, N);
-
+  
   for (int i=0; i<N; i++)
     for (int j=0; j<N; j++)
-      input(i,j) = input_data[i*N+j];
+      input(i,j) = input_data[j*N+i];
 
   int log2N = (int)(floor(log(N)/log(2)));
   int input_box_size = 1 << (log2N - start_level);
@@ -148,7 +148,7 @@ int bfio_lexing(complex<double> *input_data, complex<double> *output,  int N, in
     double temp[input_box_size];
     for (int k=0; k<input_box_size; k++)
       temp[k] = ((double)k)/input_box_size;
-    lagrange_matrix(dir_in.data(), input_box_size, n_cheby, temp, grid.data());
+    lagrange_matrix(dir_in.data(), n_cheby, input_box_size, grid.data(), temp);
   }
   
   // setting up interpolation matrix from chebyshev grids to output (regularly sampled).
@@ -161,12 +161,11 @@ int bfio_lexing(complex<double> *input_data, complex<double> *output,  int N, in
     lagrange_matrix(dir_out.data(), n_cheby, output_box_size, grid.data(), temp);
   }
 
-
   // transposes of these interpolation matrices
   MatrixXd tmats[2] = {mats[0].transpose(), mats[1].transpose()};
   MatrixXd tdir_in = dir_in.transpose();
   MatrixXd tdir_out = dir_out.transpose();
-
+  
   
   int n_zones =  1 << (log2N - start_level);
   int zone_size = N/n_zones;
@@ -220,7 +219,19 @@ int bfio_lexing(complex<double> *input_data, complex<double> *output,  int N, in
 		    
 		  // interpolate
 		  lagrange_tensor(ext.data(), all.data(), kbox_size, n_cheby, dir_in.data(), tdir_in.data());
-		    
+        
+        cout << N << "\t" << start_level << "\t" << k1 << "\t" << k2 << endl;
+        
+        
+            for (int i=0; i<n_cheby; i++)
+            for (int j=0; j<n_cheby; j++)
+                cout << i << "\t" << j << "\t" << all(i,j) << endl;
+
+        cout << endl << endl;
+        exit(0);
+        
+        
+        
 		}else {
 		    
 		  for (int c1=0; c1<2; c1++)

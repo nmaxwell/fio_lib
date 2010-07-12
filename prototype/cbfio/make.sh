@@ -15,15 +15,15 @@
 
 
 # linux:
-#g++ -x c -std=c99 -O3 -fPIC -Wall -c exact_fio.cc -o exact_fio.o
-#g++ -shared -Wl,-soname,libexact_fio.so.1 -o libexact_fio.so.1.0  exact_fio.o
+g++ -fPIC -Wall -c exact_fio.cc -o exact_fio.o
+g++ -shared -Wl,-soname,libexact_fio.so.1 -o libexact_fio.so.1.0  exact_fio.o
 
-#cp libexact_fio.so.1.0 /usr/local/lib/
-#cp libexact_fio.so.1.0 /usr/lib/
-#ln -sf /usr/local/lib/libexact_fio.so.1.0 /usr/local/lib/libexact_fio.so
-#ln -sf /usr/local/lib/libexact_fio.so.1.0 /usr/local/lib/libexact_fio.so.1
-#ln -sf /usr/lib/libexact_fio.so.1.0 /usr/lib/libexact_fio.so
-#ln -sf /usr/lib/libexact_fio.so.1.0 /usr/lib/libexact_fio.so.1
+cp libexact_fio.so.1.0 /usr/local/lib/
+cp libexact_fio.so.1.0 /usr/lib/
+ln -sf /usr/local/lib/libexact_fio.so.1.0 /usr/local/lib/libexact_fio.so
+ln -sf /usr/local/lib/libexact_fio.so.1.0 /usr/local/lib/libexact_fio.so.1
+ln -sf /usr/lib/libexact_fio.so.1.0 /usr/lib/libexact_fio.so
+ln -sf /usr/lib/libexact_fio.so.1.0 /usr/lib/libexact_fio.so.1
 
 
 

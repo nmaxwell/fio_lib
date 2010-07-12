@@ -25,9 +25,9 @@ int exact_dfio_2d(  int N, complex<double> *output, complex<double> *input, doub
             
         for (int j1=0; j1<N; j1++)
         for (int j2=0; j2<N; j2++)
-            sum += input[j2+j1*N]*exp(FIO_CONST_2PI_IMAG*( phase((double)i1/N, (double)i2/N, (double)j1-halfN, (double)j2-halfN) ));
+            sum += input[j1+j2*N]*exp(FIO_CONST_2PI_IMAG*( phase((double)i1/N, (double)i2/N, (double)j1-halfN, (double)j2-halfN) ));
     
-        output[i2+i1*N] = sum;
+        output[i1+i2*N] = sum;
     }
     
     return 0;
@@ -46,9 +46,9 @@ int exact_dft_2d( int N, complex<double> *output, complex<double> *input )
         
         for (int j1=0; j1<N; j1++)
         for (int j2=0; j2<N; j2++)
-            sum += input[j2+j1*N]*exp(FIO_CONST_2PI_IMAG*( -((double)(i1*j1+i2*j2))/N ));
+            sum += input[j1+j2*N]*exp(FIO_CONST_2PI_IMAG*( -((double)(i1*j1+i2*j2))/N ));
         
-        output[i2+i1*N] = sum;
+        output[i1+i2*N] = sum;
     }
     
     return 0;

@@ -1,5 +1,13 @@
 #include "bfio.hpp"
 #include "serialize.hpp"
+#include <iostream>
+#include <time.h>
+#include <stdio.h>
+#include <fstream>
+
+
+using namespace std;
+
 
 using std::istringstream;
 using std::ifstream;
@@ -12,6 +20,7 @@ using std::cerr;
 int BFIO::eval(const CpxNumMat& f, CpxNumMat& u)
 {
   int N = f.m();
+  
   u.resize(N,N);
   setvalue(u,cpx(0,0));
   //--------
@@ -34,6 +43,7 @@ int BFIO::eval(const CpxNumMat& f, CpxNumMat& u)
   int ML = int(floor((SL+EL)/2.0));
   int nz = pow2(EL);
   int zB = N/nz;
+  
   //
   for(int z1=0; z1<nz; z1++)
     for(int z2=0; z2<nz; z2++) {
@@ -99,6 +109,19 @@ int BFIO::eval(const CpxNumMat& f, CpxNumMat& u)
 		  CpxNumMat tmp(NG,kB);		setvalue(tmp,cpx(0,0));
 		  iC( zgemm(1, dir, ext, 0, tmp) );
 		  iC( zgemm(1, tmp, tdir, 1, all) );
+		  
+		  
+		  /*
+		for (int i=0; i<NG; i++)
+		for (int j=0; j<NG; j++)
+		    cout << i << "\t" << j << "\t" << all(i,j) << endl;
+    
+		cout << endl << endl;
+		exit(0);
+        */
+        
+		  
+		  
 		} else {
 		  int p1 = int(floor(x1/2));		int p2 = int(floor(x2/2));
 		  for(int a1=0; a1<2; a1++)
@@ -279,6 +302,17 @@ int BFIO::eval(const CpxNumMat& f, CpxNumMat& u)
 	NXT.resize(0,0);
       }//ell
     }//z1z2
+    
+    
+    
+    
+    for (int i=0; i<4; i++)
+    for (int j=0; j<4; j++)
+	cout << i << "\t" << j << "\t" << u(i,j)/(double)(N*N) << endl;
+    
+    
+    
+    
   return 0;
 }
 

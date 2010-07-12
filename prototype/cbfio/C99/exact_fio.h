@@ -28,24 +28,14 @@ documentation:
     arrays are accessed as row-major, c-style
 */
 
+#include <complex.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <math.h>
-#include <complex>
-//#include <stdio.h>
-//#include <stdlib.h>
 
-using namespace std;
 
- #ifdef __cplusplus
- extern "C" {
- #endif
+int exact_fio_2d(double complex *output, int N, double complex *input, double (*phase)(double, double, double, double) );
 
-int exact_dfio_2d(  int N, std::complex<double> *output, std::complex<double> *input, double (*phase)(double, double, double, double) );
-
-int exact_dft_2d( int N, std::complex<double> *output, std::complex<double> *input );
-
- #ifdef __cplusplus
-}
- #endif
-
+int exact_fio_dft(double complex *output, int N, double complex *input);
 
 #endif
