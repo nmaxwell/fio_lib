@@ -39,7 +39,7 @@ int lagrange_matrix(double *matrix, int n_input_points, int n_output_points, dou
   
   for (int j=0; j<n_input_points; j++)
     for (int i=0; i<n_output_points; i++)
-      matrix[i*n_input_points+j] = lagrange_basis(output_points[i], n_input_points, input_points, j);
+      matrix[i+j*n_output_points] = lagrange_basis(output_points[i], n_input_points, input_points, j);
 
   return 0;
 }

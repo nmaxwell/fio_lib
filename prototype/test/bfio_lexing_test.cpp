@@ -37,6 +37,25 @@ double dft_phase(double x1, double x2, double k1, double k2)
 }
 
 
+double dft_phase_odd(double x1, double x2, double k1, double k2)
+{
+	
+  return -(x1*k1 + x2*k2)/N;
+}
+
+
+double phase(double x1, double x2, double k1, double k2)
+{
+  double norm_k = sqrt(k1*k1+k2*k2);
+  double angle = atan2(k2,k1);
+  // f(x1,x2,angle)
+  
+  double f = fabs(x1)*x1*sin(x2*6)*exp(cos(angle*3));
+  
+  return norm_k*f;
+}
+
+
 
 int test0(const char *input_fname )
 {
@@ -66,7 +85,7 @@ int test0(const char *input_fname )
   */
   
     cout << endl;
-    error = exact_dfio_2d(  N, output, input, dft_phase );
+    error = exact_dfio_2d(  N, output, input, phase );
   
     for (int i1=0; i1<4; i1++)
     for (int i2=0; i2<4; i2++)
@@ -105,7 +124,7 @@ int test1(const char *input_fname )
   int end_level = 3;
   int n_cheby = 5;
 
-  error = bfio_lexing(input, output, N, start_level, end_level, n_cheby, dft_phase);
+  error = bfio_lexing(input, output, N, start_level, end_level, n_cheby, dft_phase_odd);
   
   free(input);
   free(output);
@@ -126,7 +145,7 @@ int main()
 
     
   //while (1)
-  error = test0("../lexing/input/f_64.bin");
+  error = test1("../lexing/input/f_256.bin");
 
   if (error)
     printf("error ocurred: %d\n", error);

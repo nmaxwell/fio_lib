@@ -1,12 +1,7 @@
 #include "bfio.hpp"
 #include "serialize.hpp"
-#include <iostream>
-#include <time.h>
-#include <stdio.h>
-#include <fstream>
 
 
-using namespace std;
 
 
 using std::istringstream;
@@ -16,11 +11,27 @@ using std::set;
 using std::queue;
 using std::cerr;
 
+
+using namespace std;
+template<class T >
+void debug( T &X)
+{
+
+		for (int i=0; i<X.m(); i++)
+		  for (int j=0; j<X.n(); j++)
+		    cout << i << "\t" << j << "\t" << X(i,j) << endl;
+	    
+		//cout << endl << endl;
+		//exit(0);
+}
+
+
+
+
 //---------------------------------------
 int BFIO::eval(const CpxNumMat& f, CpxNumMat& u)
 {
   int N = f.m();
-  
   u.resize(N,N);
   setvalue(u,cpx(0,0));
   //--------
@@ -43,10 +54,10 @@ int BFIO::eval(const CpxNumMat& f, CpxNumMat& u)
   int ML = int(floor((SL+EL)/2.0));
   int nz = pow2(EL);
   int zB = N/nz;
-  
   //
   for(int z1=0; z1<nz; z1++)
     for(int z2=0; z2<nz; z2++) {
+      cout << "zone: " << z1 << "\t" << z2 << endl;
       //cerr<<z1<<" "<<z2<<endl;
       int k1stt = z1*zB;      int k1end = (z1+1)*zB;
       int k2stt = z2*zB;      int k2end = (z2+1)*zB;
@@ -94,6 +105,7 @@ int BFIO::eval(const CpxNumMat& f, CpxNumMat& u)
 		    for(int i=0; i<kB; i++) {
 		      ext(i,j) = f(i+k1*kB, j+k2*kB);
 		    }
+		  
 		  //scale
 		  vector<Point2> trg;		trg.push_back(xc);
 		  vector<Point2> src(so);
@@ -109,19 +121,6 @@ int BFIO::eval(const CpxNumMat& f, CpxNumMat& u)
 		  CpxNumMat tmp(NG,kB);		setvalue(tmp,cpx(0,0));
 		  iC( zgemm(1, dir, ext, 0, tmp) );
 		  iC( zgemm(1, tmp, tdir, 1, all) );
-		  
-		  
-		  /*
-		for (int i=0; i<NG; i++)
-		for (int j=0; j<NG; j++)
-		    cout << i << "\t" << j << "\t" << all(i,j) << endl;
-    
-		cout << endl << endl;
-		exit(0);
-        */
-        
-		  
-		  
 		} else {
 		  int p1 = int(floor(x1/2));		int p2 = int(floor(x2/2));
 		  for(int a1=0; a1<2; a1++)
@@ -155,7 +154,10 @@ int BFIO::eval(const CpxNumMat& f, CpxNumMat& u)
 		for(int j=0; j<NG; j++)
 		  for(int i=0; i<NG; i++)
 		    all(i,j) = all(i,j) / sclaux(i,j);
-		//put
+		//pu
+
+		//	cout << x1 << "\t" << x2 << "\t" << k1 << "\t" << k2 << endl;
+		//debug(all);
 		NOW(k1,k2)(x1,x2) = all;
 		//cerr<<k1<<" "<<k2<<" "<<x1<<" "<<x2<<" "<<real(all(0,0))<<" "<<imag(all(0,0))<<endl;
 	      }//x1 x2
@@ -195,10 +197,22 @@ int BFIO::eval(const CpxNumMat& f, CpxNumMat& u)
 		CpxNumVec val(NG*NG,false,NOW(k1,k2)(x1,x2).data());
 		iC( zgemv(1, evl, den, 0, val) );		//NOW(k1,k2)(x1,x2) = tmp;
 		//cerr<<k1<<" "<<k2<<" "<<x1<<" "<<x2<<" "<<real(val(0))<<" "<<imag(val(0))<<endl;
+		//cout << x1 << "\t" << x2 << "\t" << k1 << "\t" << k2 << endl;
+		//debug(NOW(k1,k2)(x1,x2));
+		//cout << endl;
 	      }
 	  }
       }//ell
       //----------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
       for(int ell=ML; ell>=EL; ell--) {
 	int nk = pow2(ell);	int nx = N/nk;
 	int kB = N/nk;	int xB = N/nx;
@@ -228,12 +242,20 @@ int BFIO::eval(const CpxNumMat& f, CpxNumMat& u)
 	  for(int i=0; i<NG; i++)
 	    co.push_back( Point2(grid(i)*xB/2, grid(j)*xB/2) );
 	//
+
+
+
+
 	for(int k1=k1stt/kB; k1<k1end/kB; k1++)
 	  for(int k2=k2stt/kB; k2<k2end/kB; k2++) {
 	    Point2 kc( (k1+0.5)*kB, (k2+0.5)*kB );
 	    for(int x1=0; x1<nx; x1++)
 	      for(int x2=0; x2<nx; x2++) {
+
 		Point2 xc( (x1+0.5)*xB, (x2+0.5)*xB );
+		//cout << ell <<"\t" << x1 << "\t" << x2 << "\t" << k1 << "\t" << k2 << endl;
+		//debug(NOW(k1,k2)(x1,x2));
+		//cout << endl;
 		//-------
 		//get
 		CpxNumMat all(NOW(k1,k2)(x1,x2));
@@ -249,16 +271,19 @@ int BFIO::eval(const CpxNumMat& f, CpxNumMat& u)
 		    all(i,j) = all(i,j) / sclaux(i,j);
 		  }
 		//
+		
 		if(ell!=EL) {
 		  int q1 = int(floor(k1/2));		  int q2 = int(floor(k2/2));
 		  for(int a1=0; a1<2; a1++)
 		    for(int a2=0; a2<2; a2++) {
 		      int c1 = 2*x1+a1;		      int c2 = 2*x2+a2;
+		      
 		      //transform
 		      CpxNumMat ext(NG,NG);		      setvalue(ext,cpx(0,0));
 		      CpxNumMat tmp(NG,NG);		      setvalue(tmp,cpx(0,0));
 		      iC( zgemm(1, tmats(a1), all, 0, tmp) );
 		      iC( zgemm(1, tmp, mats(a2), 1, ext) );
+
 		      //scale
 		      vector<Point2> src;		      src.push_back(kc);
 		      vector<Point2> trg(co);
@@ -270,6 +295,8 @@ int BFIO::eval(const CpxNumMat& f, CpxNumMat& u)
 			for(int i=0; i<NG; i++)
 			  ext(i,j) = ext(i,j) * sclaux(i,j);
 		      //put
+		      //debug(ext);
+		      //exit(0);
 		      for(int j=0; j<NG; j++)
 			for(int i=0; i<NG; i++)
 			  NXT(q1,q2)(c1,c2)(i,j) = NXT(q1,q2)(c1,c2)(i,j) + ext(i,j);
@@ -280,6 +307,7 @@ int BFIO::eval(const CpxNumMat& f, CpxNumMat& u)
 		  CpxNumMat tmp(xB,NG);		  setvalue(tmp,cpx(0,0));
 		  iC( zgemm(1, tdir, all, 0, tmp) );
 		  iC( zgemm(1, tmp, dir, 1, ext) );
+	   
 		  //scale
 		  vector<Point2> src;		  src.push_back(kc);
 		  vector<Point2> trg(to);
@@ -287,32 +315,32 @@ int BFIO::eval(const CpxNumMat& f, CpxNumMat& u)
 		    trg[g] = trg[g] + Point2(x1*xB, x2*xB);
 		  CpxNumMat scl;		  iC( kernel(N, trg, src, scl) );
 		  CpxNumMat sclaux(xB,xB,false,scl.data());
+		  //debug(all);
+		  
+		  
 		  for(int j=0; j<xB; j++)
 		    for(int i=0; i<xB; i++)
 		      ext(i,j) = ext(i,j) * sclaux(i,j);
 		  //cerr<<k1<<" "<<k2<<" "<<x1<<" "<<x2<<" "<<real(ext(0,0))<<" "<<imag(ext(0,0))<<endl;
+
+		  //  debug(ext);
+		  // cout << endl;
+
 		  //put
 		  for(int j=0; j<xB; j++)
 		    for(int i=0; i<xB; i++)
 		      u(i+x1*xB,j+x2*xB) = u(i+x1*xB,j+x2*xB) + ext(i,j);
 		}
+
 	      }//x1x2
 	  }//k1k2
 	NOW = NXT;
 	NXT.resize(0,0);
       }//ell
+      
+      
     }//z1z2
-    
-    
-    
-    
-    for (int i=0; i<4; i++)
-    for (int j=0; j<4; j++)
-	cout << i << "\t" << j << "\t" << u(i,j)/(double)(N*N) << endl;
-    
-    
-    
-    
+  debug(u);
   return 0;
 }
 

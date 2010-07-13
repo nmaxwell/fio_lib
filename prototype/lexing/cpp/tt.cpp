@@ -13,6 +13,18 @@ int optionsCreate(int argc, char** argv, map<string,string>& options)
   return 0;
 }
 
+double phase(double x1, double x2, double k1, double k2)
+{
+  double norm_k = sqrt(k1*k1+k2*k2);
+  double angle = atan2(k2,k1);
+  // f(x1,x2,angle)
+  
+  double f = fabs(x1)*x1*sin(x2*6)*exp(cos(angle*3));
+  
+  return norm_k*f;
+}
+
+
 int main(int argc, char** argv)
 {
   //0. init and get options
@@ -33,6 +45,7 @@ int main(int argc, char** argv)
   CpxNumMat u(N,N);  setvalue(u,cpx(0,0));
   //2. bfio
   BFIO bfio("bfio_");
+  bfio.test_phase = phase;
   iC( bfio.setup(opts) );
   //
   double time_eval;

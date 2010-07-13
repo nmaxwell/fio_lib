@@ -9,6 +9,8 @@ using std::set;
 using std::queue;
 using std::cerr;
 
+
+
 extern "C"
 {
   void vdsqrt_(int* n, double*, double*);
@@ -87,7 +89,7 @@ int BFIO::kernel(int N, const vector<Point2>& xi, const vector<Point2>& ki, CpxN
     DblNumMat ss(m,n), cc(m,n);
     int TTL = m*n;
     //vdsincos_(&TTL, phs.data(), ss.data(), cc.data());
-	for(int j=0; j<n; j++)      for(int i=0; i<m; i++)	{ ss(i,j) = sin(phs(i,j)); cc(i,j) = cos(phs(i,j)); }
+    for(int j=0; j<n; j++)      for(int i=0; i<m; i++)	{ ss(i,j) = sin(phs(i,j)); cc(i,j) = cos(phs(i,j)); }
     res.resize(m,n);
     for(int j=0; j<n; j++)
       for(int i=0; i<m; i++)
@@ -95,54 +97,72 @@ int BFIO::kernel(int N, const vector<Point2>& xi, const vector<Point2>& ki, CpxN
     
     
     
-    } else if(_fi==3) {  
+  } else if(_fi==3) {  
         
     //-- MAXWELL: phase for DFT
     
     int m = xs.size();
     int n = ks.size();
     for(int i=0; i<m; i++)      xs[i] = xs[i]/double(N); //LEXING: IMPORTANT
-    for(int j=0; j<n; j++)      ks[j] = ks[j]/double(N); //LEXING: IMPORTANT
+    //for(int j=0; j<n; j++)      ks[j] = ks[j]/double(N); //LEXING: IMPORTANT
     DblNumMat phs(m,n);
     
     double halfN = ((double)N)/2;
-	res.resize(m,n);
+    res.resize(m,n);
     
-    
-    
-    
-    
-    
-    
+    for (int j=0; j<n; j++)
+      for (int i=0; i<m; i++) {
+	double x1 = xs[i](0);
+	double x2 = xs[i](1);
+	double k1 = ks[j](0);
+	double k2 = ks[j](1);
+	phs(i,j) = -(x1*k1+x2*k2)*6.2831853071795865;
+      }
+
     DblNumMat imag(m,n), real(m,n);
     
     for(int j=0; j<n; j++)
-    for(int i=0; i<m; i++) {
+      for(int i=0; i<m; i++) {
         imag(i,j) = sin(phs(i,j));
         real(i,j) = cos(phs(i,j)); }
     
     for(int j=0; j<n; j++)
       for(int i=0; i<m; i++)
         res(i,j) = cpx( real(i,j), imag(i,j) );
+
+   
+  } else if(_fi==4) {  
+        
+    //-- MAXWELL: aritrary phase, as member of BFIO, function pointer
     
-    //  return -(x1*(k1+halfN) + x2*(k2+halfN));
+    int m = xs.size();
+    int n = ks.size();
+    for(int i=0; i<m; i++)      xs[i] = xs[i]/double(N); //LEXING: IMPORTANT
+    //for(int j=0; j<n; j++)      ks[j] = ks[j]/double(N); //LEXING: IMPORTANT
+    DblNumMat phs(m,n);
     
+    double halfN = ((double)N)/2;
+    res.resize(m,n);
     
-    
-    double COEF = -2.0*N;
-    double H = 1;
-    double HH = H*H;
-    for(int j=0; j<n; j++) {
-      double w = 1.0 + ks[j](0)*3.0;
-      double s = ks[j](1);
-      for(int i=0; i<m; i++) {
+    for (int j=0; j<n; j++)
+      for (int i=0; i<m; i++) {
 	double x1 = xs[i](0);
 	double x2 = xs[i](1);
-	double tmp = (s-x1)*(s-x1) + x2*x2 + HH;
-	phs(i,j) = COEF * ( w*sqrt(tmp) );
+	double k1 = ks[j](0)-halfN;
+	double k2 = ks[j](1)-halfN;
+	phs(i,j) = test_phase(x1,x2,k1,k2)*6.2831853071795865;
       }
-    }
+
+    DblNumMat imag(m,n), real(m,n);
     
+    for(int j=0; j<n; j++)
+      for(int i=0; i<m; i++) {
+        imag(i,j) = sin(phs(i,j));
+        real(i,j) = cos(phs(i,j)); }
+    
+    for(int j=0; j<n; j++)
+      for(int i=0; i<m; i++)
+        res(i,j) = cpx( real(i,j), imag(i,j) );
     
     
   } else {

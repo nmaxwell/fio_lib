@@ -1,6 +1,6 @@
 close all;
 
-N = 64;
+N = 4096;
 fi = 0;
 EPS = 9;
 EXT = 0;
@@ -19,20 +19,20 @@ if(1)
   
   [mats,dir] = bfio_prep(EL,EPS);
   
-  if(0)
+  if(1)
     f = randn(N,N) + i*randn(N,N);  %mid = [N/4:3*N/4];  f(mid,mid) = 0;
     binstr = sprintf('f_%d.bin', N);
     fid = fopen(binstr,'w');
     string = {'CpxNumMat'};
     serialize(fid, f, string);
   end
-  if(1)
+  if(0)
     binstr = sprintf('f_%d.bin', N);
     fid = fopen(binstr,'r');
     string = {'CpxNumMat'};
     f = deserialize(fid, string);
   end
-  
+	quit()
   t0 = cputime;
   
   %u = bfio_eval(N,SL,EL,EXT,EPS,fun,f,mats,dir); %LEXING

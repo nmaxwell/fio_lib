@@ -35,6 +35,7 @@ public:
   int _EPS;
   int _fi;
   map<int, Entry> _e2dmap;
+  double (*test_phase)(double, double, double, double);
 public:
   BFIO(const string& p): ComObject(p) {;}
   ~BFIO() {;}
