@@ -3,6 +3,7 @@
 
 #include "bfio_interpolation.cpp"
 
+
 #include <iostream>
 #include <math.h>
 #include <complex>
@@ -418,7 +419,7 @@ int bfio_lexing(complex<double> *input_data, complex<double> *output_data,  int 
 
     } // zone loop
 
-  debug(output);
+  // debug(output);
   
 
   for (int i=0; i<N; i++)

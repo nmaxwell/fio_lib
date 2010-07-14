@@ -1,7 +1,35 @@
 #include "bfio.hpp"
 #include "serialize.hpp"
 
+#include <CoreServices/CoreServices.h>
+
 using namespace std;
+
+
+double get_real_time()
+{
+
+#if defined(__APPLE__)
+ 
+  Nanoseconds Nsecs = AbsoluteToNanoseconds(UpTime());
+  return (double)(UnsignedWideToUInt64(Nsecs))*1.0E-9;
+
+#elif defined(__linux)
+
+  timespec current_time;
+  clock_gettime(CLOCK_REALTIME, &current_time);
+  return (double) ((double)current_time.tv_sec+(double)current_time.tv_nsec/(1.0E9));
+#else
+
+  return 0;
+
+#endif
+
+}
+
+
+
+
 
 int optionsCreate(int argc, char** argv, map<string,string>& options)
 {
@@ -48,6 +76,7 @@ int main(int argc, char** argv)
   bfio.test_phase = phase;
   iC( bfio.setup(opts) );
   //
+  double start_time = get_real_time();
   double time_eval;
   if(N<=256) {
     ck0 = clock();
@@ -58,20 +87,22 @@ int main(int argc, char** argv)
     iC( bfio.eval(f,u) );
     t1 = time(0);    time_eval = difftime(t1,t0);
   }
-  //
+  double end_time = get_real_time();
+  /*
   double relerr = 0;
   int NC = 64;
   ck0 = clock();
   iC( bfio.check(f,u,NC,relerr) );
   ck1 = clock();
   double time_chck = double(ck1-ck0)/CLOCKS_PER_SEC * N * N / double(NC);
-  //
-  printf("RESULT\n");
+  */
+  //printf("RESULT\n");
   printf("N  %d\n", N);
-  printf("Ta %.2e\n", time_eval);
-  printf("Td %.2e\n", time_chck);
-  printf("Rt %.2e\n", time_chck/time_eval);
-  printf("Ea %.2e\n", relerr);
+  //printf("Ta %.2e\n", time_eval);
+  //printf("Td %.2e\n", time_chck);
+  //printf("Rt %.2e\n", time_chck/time_eval);
+  //printf("Ea %.2e\n", relerr);
+  printf("Run time for bfio_eval: %f\n", end_time - start_time );
   //
   return 0;
 }

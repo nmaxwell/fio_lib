@@ -14,7 +14,7 @@ libbfio.a:	${LIB_OBJ}
 	$(RANLIB) $@
 
 tt:	libbfio.a tt.o
-	${CXX} -o tt tt.o libbfio.a ${LDFLAGS}
+	${CXX} -o tt tt.o libbfio.a ${LDFLAGS} -framework CoreServices
 
 -include $(DEP)
 

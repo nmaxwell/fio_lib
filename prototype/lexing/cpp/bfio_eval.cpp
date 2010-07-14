@@ -17,12 +17,12 @@ template<class T >
 void debug( T &X)
 {
 
-		for (int i=0; i<X.m(); i++)
-		  for (int j=0; j<X.n(); j++)
-		    cout << i << "\t" << j << "\t" << X(i,j) << endl;
-	    
-		//cout << endl << endl;
-		//exit(0);
+  for (int i=0; i<X.m(); i++)
+    for (int j=0; j<X.n(); j++)
+      cout << i << "\t" << j << "\t" << X(i,j) << endl;
+  
+  //cout << endl << endl;
+  //exit(0);
 }
 
 
@@ -340,7 +340,7 @@ int BFIO::eval(const CpxNumMat& f, CpxNumMat& u)
       
       
     }//z1z2
-  debug(u);
+  // debug(u);
   return 0;
 }
 

@@ -1,4 +1,11 @@
 
+//#include <google/profiler.h>
+
+#if defined(__APPLE__)
+#include <CoreServices/CoreServices.h>
+#endif
+
+
 #include "../cppbfio/bfio_lexing.cpp"
 #include "../cppbfio/exact_fio.cpp"
 #include <iostream>
@@ -11,10 +18,23 @@ using namespace std;
 
 double get_real_time()
 {
-  /*timespec current_time;
-	clock_gettime(CLOCK_REALTIME, &current_time);
-	return (double) ((double)current_time.tv_sec+(double)current_time.tv_nsec/(1.0E9)); */
-  return clock();
+
+#if defined(__APPLE__)
+ 
+  Nanoseconds Nsecs = AbsoluteToNanoseconds(UpTime());
+  return (double)(UnsignedWideToUInt64(Nsecs))*1.0E-9;
+
+#elif defined(__linux)
+
+  timespec current_time;
+  clock_gettime(CLOCK_REALTIME, &current_time);
+  return (double) ((double)current_time.tv_sec+(double)current_time.tv_nsec/(1.0E9));
+#else
+
+  return 0;
+
+#endif
+
 }
 
 double uniform(double low, double high)
@@ -69,27 +89,27 @@ int test0(const char *input_fname )
   input_file.read((char*)(&n), 4);
   assert( n == m );
   N = m;
-    cout << "N: " << N << endl;
+  cout << "N: " << N << endl;
   complex<double>  *input = (complex<double> *)calloc(N*N, 16);
   complex<double> *output = (complex<double> *)calloc(N*N, 16);
 
   input_file.read((char *)(input), m*n*16);
   
   /*
-  int x1 = 1;
-  int x2 = 2;
+    int x1 = 1;
+    int x2 = 2;
   
-  for (int k1=0; k1<N; k1++)
-  for (int k2=0; k2<N; k2++)
+    for (int k1=0; k1<N; k1++)
+    for (int k2=0; k2<N; k2++)
     input[k1+k2*N] = exp(FIO_CONST_2PI_IMAG*(double)(x1*k1+x2*k2)/(double)N);
   */
   
-    cout << endl;
-    error = exact_dfio_2d(  N, output, input, phase );
+  cout << endl;
+  error = exact_dfio_2d(  N, output, input, phase );
   
-    for (int i1=0; i1<4; i1++)
+  for (int i1=0; i1<4; i1++)
     for (int i2=0; i2<4; i2++)
-        cout << i1 << "\t" << i2 << "\t" << output[i1+i2*N]/(double)(N*N) << endl;
+      cout << i1 << "\t" << i2 << "\t" << output[i1+i2*N]/(double)(N*N) << endl;
   
   
   
@@ -112,7 +132,7 @@ int test1(const char *input_fname )
   input_file.read((char*)(&n), 4);
   assert( n == m );
   N = m;
-    cout << "N: " << N << endl;
+  cout << "N: " << N << endl;
   complex<double>  *input = (complex<double> *)calloc(N*N, 16);
   complex<double> *output = (complex<double> *)calloc(N*N, 16);
 
@@ -124,7 +144,15 @@ int test1(const char *input_fname )
   int end_level = 3;
   int n_cheby = 5;
 
+  //  ProfilerStart("/Users/maxwelna/fio_lib/prototype/test/profile_out");
+  double start_time = get_real_time();
+
   error = bfio_lexing(input, output, N, start_level, end_level, n_cheby, dft_phase_odd);
+  
+  double end_time = get_real_time();
+  // ProfilerStop();
+  
+  cout << "Run time: " << end_time - start_time << endl;
   
   free(input);
   free(output);
