@@ -13,8 +13,14 @@ libbfio.a:	${LIB_OBJ}
 	$(AR) $(ARFLAGS) $@ $(LIB_OBJ)
 	$(RANLIB) $@
 
-tt:	libbfio.a tt.o
+tt_osx:	libbfio.a tt.o
 	${CXX} -o tt tt.o libbfio.a ${LDFLAGS} -framework CoreServices
+
+tt_linux:	libbfio.a tt.o
+	${CXX} -o tt tt.o libbfio.a ${LDFLAGS} -lrt
+
+tt_linux_gprof:	libbfio.a tt.o
+	${CXX} -o tt tt.o libbfio.a ${LDFLAGS} -lrt -g -pg
 
 -include $(DEP)
 
