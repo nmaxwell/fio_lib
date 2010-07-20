@@ -150,7 +150,7 @@ expansionCoefficients::~expansionCoefficients()
 
 
 
-int bfio_lexing(complex<double> *input_data, complex<double> *output_data,  int N, int start_level, int end_level, int n_cheby, double (*phase)(double, double, double ,double))
+int bfio_core(complex<double> *input_data, complex<double> *output_data,  int N, int start_level, int end_level, int n_cheby, double (*phase)(double, double, double ,double), complex<double> (*amplitude)(double, double, double, double))
 {
   if (input_data == NULL || output_data == NULL) return 1;
   

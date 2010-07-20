@@ -6,7 +6,8 @@
 #endif
 
 
-#include "../cppbfio/bfio_lexing.cpp"
+#include "../cppbfio/bfio_prototype_1.cpp"
+//#include "../cppbfio/bfio_lexing.cpp"
 #include "../cppbfio/exact_fio.cpp"
 #include <iostream>
 #include <time.h>
@@ -44,28 +45,15 @@ double uniform(double low, double high)
 
 
 
-
-
-
 int N;
-
-double dft_phase(double x1, double x2, double k1, double k2)
-{
-  double halfN = ((double)N)/2;
-	
-  return -(x1*(k1+halfN) + x2*(k2+halfN));
-}
-
-
-double dft_phase_odd(double x1, double x2, double k1, double k2)
-{
-	
-  return -(x1*k1 + x2*k2)/N;
-}
 
 
 double phase(double x1, double x2, double k1, double k2)
 {
+  return (x1*k1+x2*k2);
+
+
+
   double norm_k = sqrt(k1*k1+k2*k2);
   double angle = atan2(k2,k1);
   // f(x1,x2,angle)
@@ -73,6 +61,27 @@ double phase(double x1, double x2, double k1, double k2)
   double f = fabs(x1)*x1*sin(x2*6)*exp(cos(angle*3));
   
   return norm_k*f;
+}
+
+
+double phase_odd(double x1, double x2, double k1, double k2)
+{
+  double halfN = 0.5*N;
+  
+  return phase(x1/N, x2/N, k1-halfN, k2-halfN);
+}
+
+complex<double> amplitude(double x1, double x2, double k1, double k2)
+{
+  return 1.0;
+  return exp(-(x1*x2+k1*k2)*10.0);
+}
+
+complex<double> amplitude_odd(double x1, double x2, double k1, double k2)
+{
+  double halfN = 0.5*N;
+  
+  return amplitude(x1/N, x2/N, k1-halfN, k2-halfN);
 }
 
 
@@ -105,7 +114,7 @@ int test0(const char *input_fname )
   */
   
   cout << endl;
-  error = exact_dfio_2d(  N, output, input, phase );
+  //error = exact_dfio_2d(  N, output, input, phase );
   
   for (int i1=0; i1<4; i1++)
     for (int i2=0; i2<4; i2++)
@@ -147,13 +156,45 @@ int test1(const char *input_fname )
   //  ProfilerStart("/Users/maxwelna/fio_lib/prototype/test/profile_out");
   double start_time = get_real_time();
 
-  error = bfio_lexing(input, output, N, start_level, end_level, n_cheby, dft_phase_odd);
+  error = bfio_core(input, output, N, start_level, end_level, n_cheby, phase_odd, amplitude_odd);
+  if (error) return error;
   
   double end_time = get_real_time();
   // ProfilerStop();
+  double bfio_run_time = end_time - start_time;
   
-  cout << "Run time: " << end_time - start_time << endl;
   
+  
+  int n_samples = 1 << 5;
+  int *sample_indexes = new int [n_samples*2];
+  complex<double> *exact_output = (complex<double> *)calloc(n_samples, 16);
+  for (int k=0; k<n_samples; k++) {
+    sample_indexes[2*k] = rand()%N;
+    sample_indexes[2*k+1] = rand()%N; }
+  
+  start_time = get_real_time();
+  error = exact_dfio_2d_sample(n_samples, sample_indexes, N,  exact_output, input, phase, amplitude);
+  if (error) return error;
+  end_time = get_real_time();
+
+  double fio_run_time = (end_time-start_time)*(N*N)/(double)(n_samples);
+  double err=0.0;
+  for (int k=0; k<n_samples; k++) {
+    err += pow(abs((output[sample_indexes[2*k]+N*sample_indexes[2*k+1]]-exact_output[k])),2);
+        cout << k << "\t" << sample_indexes[k*2] << "\t" << sample_indexes[2*k+1] << "\t" << output[sample_indexes[2*k]+N*sample_indexes[2*k+1]] << "\t" << exact_output[k] << endl;
+ }
+  double mag=0.0;
+  for (int k=0; k<n_samples; k++)
+    mag += pow(abs(exact_output[k]),2);
+  err = sqrt(err/mag);
+
+  cout << "BFIO run time: " << bfio_run_time  << endl;
+  cout << "FIO run time: " << fio_run_time << endl;
+  cout << "Speedup: " << fio_run_time/bfio_run_time << endl;
+  cout << "Relative l2 error: " << err << endl;
+  
+  
+  delete [] sample_indexes;
   free(input);
   free(output);
   return error;

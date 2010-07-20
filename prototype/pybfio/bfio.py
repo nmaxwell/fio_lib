@@ -6,13 +6,8 @@
 import math
 import itertools
 import numpy
-<<<<<<< HEAD
 import sys
 import unittest
-=======
-import unittest
-
->>>>>>> 3986310ff80c68cafd3241fa9b449d03dfcc2160
 import interpolation
 
 

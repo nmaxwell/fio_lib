@@ -340,7 +340,7 @@ int BFIO::eval(const CpxNumMat& f, CpxNumMat& u)
       
       
     }//z1z2
-  // debug(u);
+   debug(u);
   return 0;
 }
 

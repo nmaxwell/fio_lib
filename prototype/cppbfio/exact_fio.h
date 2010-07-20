@@ -37,9 +37,12 @@ using namespace std;
  extern "C" {
  #endif
 
-int exact_dfio_2d(  int N, std::complex<double> *output, std::complex<double> *input, double (*phase)(double, double, double, double) );
 
-int exact_dft_2d( int N, std::complex<double> *output, std::complex<double> *input );
+
+
+   //int exact_dfio_2d(  int N, std::complex<double> *output, std::complex<double> *input, double (*phase)(double, double, double, double) );
+
+   //int exact_dft_2d( int N, std::complex<double> *output, std::complex<double> *input );
 
  #ifdef __cplusplus
 }
